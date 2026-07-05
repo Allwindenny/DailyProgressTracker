@@ -1,0 +1,10 @@
+bin/
+obj/
+
+.vscode/
+
+tasks.db
+*.db-shm
+*.db-wal
+
+.DS_Store
