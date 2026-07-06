@@ -8,10 +8,10 @@ class Program
 
     static void Main(string[] args)
     {
-        using (var db = new AppDbContext())
+      /*  using (var db = new AppDbContext())
     {
         db.Database.EnsureCreated();
-    }
+    }*/// removing the  for the EF core migration for new database
         while (true)
         {
             Console.WriteLine("\n==== Daily Progress Tracker ====");
@@ -62,8 +62,8 @@ class Program
         Console.WriteLine("Task added successfully!");
     }
 */
-    static void AddTask()// for reading from the db
-   {
+    static void AddTask()
+{
     Console.Write("Enter task name: ");
     string? name = Console.ReadLine();
 
@@ -73,17 +73,21 @@ class Program
         return;
     }
 
+    Console.Write("Enter learning notes (optional, press Enter to skip): ");//adding the notes which can be empty
+    string? notes = Console.ReadLine();
+
     using (var db = new AppDbContext())
     {
         TaskItem task = new TaskItem(name);
 
-        db.Tasks.Add(task);
+        task.LearningNotes = notes;//implementing the note feature
 
+        db.Tasks.Add(task);
         db.SaveChanges();
     }
 
     Console.WriteLine("Task added successfully!");
-    }
+}
     
   /*  static void ViewTasks()
     {
@@ -144,6 +148,10 @@ class Program
                 Console.WriteLine($"   Completed: {task.CompletedDate}");
             else
                 Console.WriteLine("   Completed: Not Completed");
+            if (string.IsNullOrWhiteSpace(task.LearningNotes))//implementing the note feature
+                Console.WriteLine("   Learning Notes: No notes added");
+            else
+                Console.WriteLine($"   Learning Notes: {task.LearningNotes}");
 
             Console.WriteLine();
         }
@@ -187,6 +195,26 @@ class Program
         {
             Console.WriteLine("Task not found.");
             return;
+        }
+        if (task.IsCompleted)
+       {
+           Console.WriteLine("This task is already completed.");
+           return;
+        }
+        if (string.IsNullOrWhiteSpace(task.LearningNotes))
+       {
+           Console.WriteLine("\nLearning notes are required before completing a task.");
+
+           Console.Write("Enter your learning notes: ");
+            string? notes = Console.ReadLine();
+
+          if (string.IsNullOrWhiteSpace(notes))
+         {
+           Console.WriteLine("Task cannot be completed without learning notes.");
+            return;
+          }
+
+         task.LearningNotes = notes;
         }
 
         task.MarkCompleted();
