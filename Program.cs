@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Text;// for reading the text for using a class builder called string
 
 class Program
 {
@@ -73,8 +74,9 @@ class Program
         return;
     }
 
-    Console.Write("Enter learning notes (optional, press Enter to skip): ");//adding the notes which can be empty
-    string? notes = Console.ReadLine();
+   //adding the notes which can be empty
+   // string? notes = Console.ReadLine();
+    string notes = ReadLearningNotes();// calling the function which will giv ethe multiline facility for the  commandline
 
     using (var db = new AppDbContext())
     {
@@ -205,13 +207,12 @@ class Program
        {
            Console.WriteLine("\nLearning notes are required before completing a task.");
 
-           Console.Write("Enter your learning notes: ");
-            string? notes = Console.ReadLine();
+            string? notes = ReadLearningNotes();
 
           if (string.IsNullOrWhiteSpace(notes))
          {
            Console.WriteLine("Task cannot be completed without learning notes.");
-            return;
+        
           }
 
          task.LearningNotes = notes;
@@ -255,5 +256,30 @@ class Program
 
     Console.WriteLine("Task deleted successfully!");
 }
+//The new helper methode for the string building
+static string ReadLearningNotes()
+{
+    Console.WriteLine("\nEnter your learning notes.");
+    Console.WriteLine("Type END on a new line when finished.\n");
+
+    StringBuilder builder = new StringBuilder();
+
+    while (true)
+    {
+        string? line = Console.ReadLine();
+
+        if (line == null)
+            continue;
+
+        if (line.Equals("END", StringComparison.OrdinalIgnoreCase))
+            break;
+
+        builder.AppendLine(line);
+    }
+
+    return builder.ToString().Trim();
+}
+
+
 
 }
