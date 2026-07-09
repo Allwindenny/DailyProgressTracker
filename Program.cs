@@ -4,17 +4,16 @@ using System.Collections.Generic;
 using System.Text;// for reading the text for using a class builder called string
 using DailyProgressTracker.Data;
 using DailyProgressTracker.Models;
+using DailyProgressTracker.Services;
 
 class Program
 {
+    static TaskService taskService = new TaskService();
     static List<TaskItem> tasks = new List<TaskItem>();
 
     static void Main(string[] args)
     {
-      /*  using (var db = new AppDbContext())
-    {
-        db.Database.EnsureCreated();
-    }*/// removing the  for the EF core migration for new database
+      
         while (true)
         {
             Console.WriteLine("\n==== Daily Progress Tracker ====");
@@ -54,18 +53,7 @@ class Program
             }
         }
     }
-
-    /*static void AddTask()
-    {
-        Console.Write("Enter task name: ");
-        string name = Console.ReadLine();
-
-        tasks.Add(new TaskItem(name));
-
-        Console.WriteLine("Task added successfully!");
-    }
-*/
-    static void AddTask()
+   static void AddTask()
 {
     Console.Write("Enter task name: ");
     string? name = Console.ReadLine();
@@ -76,58 +64,13 @@ class Program
         return;
     }
 
-   //adding the notes which can be empty
-   // string? notes = Console.ReadLine();
-    string notes = ReadLearningNotes();// calling the function which will giv ethe multiline facility for the  commandline
+    string notes = ReadLearningNotes();
 
-    using (var db = new AppDbContext())
-    {
-        TaskItem task = new TaskItem(name);
-
-        task.LearningNotes = notes;//implementing the note feature
-
-        db.Tasks.Add(task);
-        db.SaveChanges();
-    }
+    taskService.AddTask(name, notes);
 
     Console.WriteLine("Task added successfully!");
 }
-    
-  /*  static void ViewTasks()
-    {
-        if (tasks.Count == 0)
-        {
-            Console.WriteLine("No tasks found.");
-            return;
-        }
-
-        Console.WriteLine("\nYour Tasks:");
-
-        for (int i = 0; i < tasks.Count; i++)
-       {
-         string status = tasks[i].IsCompleted
-          ? " Completed"
-          : " Pending";
-
-         Console.WriteLine(
-          $"{i + 1}. {tasks[i].Name}"
-          );
-
-          Console.WriteLine(
-          $"   Status: {status}"
-            );
-
-         Console.WriteLine(
-         $"   Created: {tasks[i].CreatedDate}"
-           );
-
-         Console.WriteLine(
-          $"   Completed: {(tasks[i].CompletedDate?.ToString() ?? "Not Completed")}"
-          );
-
-         Console.WriteLine();
-         }
-    }*/
+ 
     static void ViewTasks()
 {
     using (var db = new AppDbContext())
@@ -162,23 +105,7 @@ class Program
     }
 }
 
-  /*  static void MarkTask()
-    {
-        ViewTasks();
-
-        Console.Write("Enter task number to mark completed: ");
-        int index = Convert.ToInt32(Console.ReadLine()) - 1;
-
-        if (index >= 0 && index < tasks.Count)
-        {
-            tasks[index].MarkCompleted();
-            Console.WriteLine("Task marked as completed!");
-        }
-        else
-        {
-            Console.WriteLine("Invalid task number!");
-        }
-    }*/
+  
      static void MarkTask()
     {
      ViewTasks();
@@ -242,22 +169,14 @@ class Program
         return;
     }
 
-    using (var db = new AppDbContext())
+    if (taskService.DeleteTask(id))
     {
-        TaskItem? task = db.Tasks.Find(id);
-
-        if (task == null)
-        {
-            Console.WriteLine("Task not found.");
-            return;
-        }
-
-        db.Tasks.Remove(task);
-
-        db.SaveChanges();
+        Console.WriteLine("Task deleted successfully!");
     }
-
-    Console.WriteLine("Task deleted successfully!");
+    else
+    {
+        Console.WriteLine("Task not found.");
+    }
 }
 //The new helper methode for the string building
 static string ReadLearningNotes()
