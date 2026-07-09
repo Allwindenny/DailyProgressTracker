@@ -12,6 +12,7 @@
     new code with  changed database design(adding the notes)
 
    */// adding the new feature notes(which can be null on createion)
+namespace DailyProgressTracker.Models;
   public class TaskItem
 {
     public int Id { get; set; }

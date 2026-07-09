@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;// for reading the text for using a class builder called string
+using DailyProgressTracker.Data;
+using DailyProgressTracker.Models;
 
 class Program
 {
@@ -212,6 +214,7 @@ class Program
           if (string.IsNullOrWhiteSpace(notes))
          {
            Console.WriteLine("Task cannot be completed without learning notes.");
+           return;
         
           }
 

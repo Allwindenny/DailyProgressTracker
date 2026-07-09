@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using DailyProgressTracker.Models;
+namespace DailyProgressTracker.Data;
 
 public class AppDbContext : DbContext
 {
