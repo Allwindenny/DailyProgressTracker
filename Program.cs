@@ -73,9 +73,9 @@ class Program
  
     static void ViewTasks()
 {
-    using (var db = new AppDbContext())
-    {
-        var tasks = db.Tasks.ToList();
+    
+   
+        List<TaskItem> tasks = taskService.GetAllTasks();
 
         if (tasks.Count == 0)
         {
@@ -102,15 +102,15 @@ class Program
 
             Console.WriteLine();
         }
-    }
+    
 }
 
   
-     static void MarkTask()
-    {
-     ViewTasks();
+   static void MarkTask()
+{
+    ViewTasks();
 
-     Console.Write("Enter Task ID to mark as completed: ");
+    Console.Write("Enter Task ID to mark as completed: ");
 
     if (!int.TryParse(Console.ReadLine(), out int id))
     {
@@ -118,45 +118,15 @@ class Program
         return;
     }
 
-    using (var db = new AppDbContext())
-    {
-        TaskItem? task = db.Tasks.Find(id);
+    Console.WriteLine("\nEnter learning notes if required.");
+    Console.WriteLine("Type END on a new line when finished.\n");
 
-        if (task == null)
-        {
-            Console.WriteLine("Task not found.");
-            return;
-        }
-        if (task.IsCompleted)
-       {
-           Console.WriteLine("This task is already completed.");
-           return;
-        }
-        if (string.IsNullOrWhiteSpace(task.LearningNotes))
-       {
-           Console.WriteLine("\nLearning notes are required before completing a task.");
+    string notes = ReadLearningNotes();
 
-            string? notes = ReadLearningNotes();
+    string result = taskService.MarkTaskCompleted(id, notes);
 
-          if (string.IsNullOrWhiteSpace(notes))
-         {
-           Console.WriteLine("Task cannot be completed without learning notes.");
-           return;
-        
-          }
-
-         task.LearningNotes = notes;
-        }
-
-        task.MarkCompleted();
-
-        db.SaveChanges();
-    }
-
-    Console.WriteLine("Task marked as completed!");
-    
-    
-   }
+    Console.WriteLine(result);
+}
    static void DeleteTask()
 {
     ViewTasks();
