@@ -1,10 +1,18 @@
 using DailyProgressTracker.Data;
 using DailyProgressTracker.Models;
+using DailyProgressTracker.Interfaces;
 
 namespace DailyProgressTracker.Services;
 
 public class TaskService
 {
+
+    private readonly IEmbeddingService embeddingService;
+
+    public TaskService()
+{
+    embeddingService = new EmbeddingService();
+}
     public void AddTask(string name, string? notes)
     {
         using var db = new AppDbContext();
@@ -14,6 +22,11 @@ public class TaskService
 
         db.Tasks.Add(task);
         db.SaveChanges();
+
+        if (!string.IsNullOrWhiteSpace(notes))
+     {
+        embeddingService.GenerateEmbedding(notes);
+      }
     }
 
     public List<TaskItem> GetAllTasks()
