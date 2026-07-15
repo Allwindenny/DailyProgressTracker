@@ -13,20 +13,27 @@ public class TaskService
 {
     embeddingService = new EmbeddingService();
 }
+    
     public void AddTask(string name, string? notes)
+
     {
+        
         using var db = new AppDbContext();
 
         TaskItem task = new TaskItem(name);
         task.LearningNotes = notes;
 
-        db.Tasks.Add(task);
-        db.SaveChanges();
 
         if (!string.IsNullOrWhiteSpace(notes))
      {
-        embeddingService.GenerateEmbedding(notes);
+        float[] embedding = embeddingService.GenerateEmbedding(notes);
+
+        Console.WriteLine($"Embedding created with {embedding.Length} dimensions.");
       }
+
+
+      db.Tasks.Add(task);
+      db.SaveChanges();
     }
 
     public List<TaskItem> GetAllTasks()

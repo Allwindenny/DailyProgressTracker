@@ -13,6 +13,10 @@ class Program
 
     static void Main(string[] args)
     {
+
+      EmbeddingService embeddingService = new EmbeddingService();
+      float[] embedding = embeddingService.GenerateEmbedding("Today I learned about Entity Framework Core.");
+      Console.WriteLine($"Embedding size: {embedding.Length}");
       
         while (true)
         {
