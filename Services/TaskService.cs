@@ -1,6 +1,7 @@
 using DailyProgressTracker.Data;
 using DailyProgressTracker.Models;
 using DailyProgressTracker.Interfaces;
+using DailyProgressTracker.Repositories;
 
 namespace DailyProgressTracker.Services;
 
@@ -8,33 +9,35 @@ public class TaskService
 {
 
     private readonly IEmbeddingService embeddingService;
+    private readonly EmbeddingRepository embeddingRepository;
 
     public TaskService()
 {
     embeddingService = new EmbeddingService();
+    embeddingRepository = new EmbeddingRepository();
 }
     
     public void AddTask(string name, string? notes)
+{
+    using var db = new AppDbContext();
 
+    TaskItem task = new TaskItem(name);
+    task.LearningNotes = notes;
+
+    // First save the task
+    db.Tasks.Add(task);
+    db.SaveChanges();
+
+    // Now task.Id contains the real database ID
+    if (!string.IsNullOrWhiteSpace(notes))
     {
-        
-        using var db = new AppDbContext();
-
-        TaskItem task = new TaskItem(name);
-        task.LearningNotes = notes;
-
-
-        if (!string.IsNullOrWhiteSpace(notes))
-     {
         float[] embedding = embeddingService.GenerateEmbedding(notes);
 
         Console.WriteLine($"Embedding created with {embedding.Length} dimensions.");
-      }
 
-
-      db.Tasks.Add(task);
-      db.SaveChanges();
+        embeddingRepository.SaveEmbedding(task.Id, embedding);
     }
+}
 
     public List<TaskItem> GetAllTasks()
     {
