@@ -45,7 +45,12 @@ public class TaskService
 
         return db.Tasks.ToList();
     }
+    public TaskItem? GetTaskById(int id)
+{
+    using var db = new AppDbContext();
 
+    return db.Tasks.Find(id);
+}
     public bool DeleteTask(int id)
     {
         using var db = new AppDbContext();

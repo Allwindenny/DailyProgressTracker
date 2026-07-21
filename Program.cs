@@ -6,9 +6,12 @@ using DailyProgressTracker.Data;
 using DailyProgressTracker.Models;
 using DailyProgressTracker.Services;
 
+
 class Program
 {
     static TaskService taskService = new TaskService();
+    
+    static SearchService searchService = new SearchService();
     static List<TaskItem> tasks = new List<TaskItem>();
 
     static void Main(string[] args)
@@ -25,10 +28,11 @@ class Program
             Console.WriteLine("2. View Tasks");
             Console.WriteLine("3. Mark Task as Completed");
             Console.WriteLine("4. Delete");
-            Console.WriteLine("5. Exit");
+            Console.WriteLine("5. Learning Assistant");
+            Console.WriteLine("6. Exit");
             Console.Write("Choose option: ");
 
-            string choice = Console.ReadLine();
+            string? choice = Console.ReadLine();
 
             switch (choice)
             {
@@ -49,7 +53,11 @@ class Program
                     break;
 
                 case "5":
-                    return;
+                  AskLearningAssistant();
+                  break;
+
+                case "6":
+                 return;
 
                 default:
                     Console.WriteLine("Invalid option!");
@@ -174,7 +182,26 @@ static string ReadLearningNotes()
     }
 
     return builder.ToString().Trim();
+
+
+} 
+static void AskLearningAssistant()
+{
+    Console.WriteLine();
+    Console.Write("Ask a question about your learning: ");
+
+    string? question = Console.ReadLine();
+
+    if (string.IsNullOrWhiteSpace(question))
+    {
+        Console.WriteLine("Please enter a valid question.");
+        return;
+    }
+
+    TaskItem? task = searchService.FindMostRelevantTask(question);
 }
+
+
 
 
 
