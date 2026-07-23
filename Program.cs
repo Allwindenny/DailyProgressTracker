@@ -199,6 +199,21 @@ static void AskLearningAssistant()
     }
 
     TaskItem? task = searchService.FindMostRelevantTask(question);
+
+    if (task == null)
+    {
+        Console.WriteLine("\nNo relevant learning notes found.");
+        return;
+    }
+
+    Console.WriteLine("\n===== Learning Assistant =====");
+    Console.WriteLine($"Task: {task.Name}");
+    Console.WriteLine();
+    Console.WriteLine("Learning Notes:");
+    Console.WriteLine(task.LearningNotes);
+    Console.WriteLine();
+    Console.WriteLine($"Status: {(task.IsCompleted ? "Completed" : "Pending")}");
+    Console.WriteLine($"Created: {task.CreatedDate}");
 }
 
 
